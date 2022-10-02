@@ -20,8 +20,9 @@ const userRoutes = require('./routes/users');
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const User = require('./models/user');
-const dbUrl = process.env.DB_URL;
-//'mongodb://localhost:27017/yelp-camp';
+
+
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/camp-review';
 
 
 
@@ -49,12 +50,13 @@ app.use(mongoSanitize({
     replaceWith: '_'
 }))
 
+const secret = process.env.SECRET || 'tuandao';
 
 const store = MongoDBStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 60 * 60,
     crypto: {
-        secret: 'tuandao'
+        secret
     }
 });
 
@@ -66,7 +68,7 @@ store.on("error", function (e) {
 const sessionConfig = {
     store,
     name: 'session',
-    secret: 'tuandao',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
